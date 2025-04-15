@@ -37,39 +37,48 @@ export class UserManager {
 
     // Alle Admins ausgeben
     public getAdmins(): AdminUser[]{
+        let admins: AdminUser[] = [];
         for (let i = 0; i < this.users.length; i++){
-            if (this.isAdmin(this.users[i])){
-                return [{
-                    id: "123",
-                    name: "test",
-                    email: "admin@mail.de",
-                    role: "admin",
-                    permissions: ["WRITE", "DELETE", "EDIT"]
-                }]
+            const user = this.users[i];
+            if (this.isAdmin(user)){
+                admins.push(user)
             } else {
-                console.error("User ist kein Admin!")
-                return []
+                console.error("User ist kein Kunde!")
             }
         }
+        return admins
     }
 
     // Alle Kunden ausgeben
     public getCustomers(): CustomerUser[] {
-        if (!this.isAdmin(this.users[i])){
-            return []
-        } else {
-            console.error("User ist kein Kunde!")
-            return []
+        let customers: CustomerUser[] = [];
+        for (let i = 0; i < this.users.length; i++){
+            const user = this.users[i];
+            if (this.isCustomer(user)){
+                customers.push(user)
+            } else {
+                console.error("User ist kein Kunde!")
+            }
         }
+        return customers
     }
 
     // Type Guards
     // Ist der User ein Administrator?
-    public isAdmin(_User: IUser): boolean {
+    public isAdmin(_User: IUser): _User is AdminUser {
         if (_User.role === 'admin') {
             return true;
         } else {
             console.error("User ist kein Admin!");
+            return false;
+        }
+    }
+
+    public isCustomer(_User: IUser): _User is CustomerUser {
+        if (_User.role === 'customer') {
+            return true;
+        } else {
+            console.error("User ist kein Kunde!");
             return false;
         }
     }
