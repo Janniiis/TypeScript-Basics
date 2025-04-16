@@ -43,29 +43,27 @@ export class UserManager {
     // Alle Admins ausgeben
     public getAdmins(): AdminUser[] {
         let admins: AdminUser[] = [];
-        for (let i = 0; i < this.users.length; i++) {
-            const user = this.users[i];
+        this.users.forEach(user => {
             if (this.isAdmin(user)) {
                 admins.push(user)
             } else {
                 console.error("User ist kein Admin!")
             }
-        }
+        });
         return admins
     }
 
     // Alle Kunden ausgeben
     public getCustomers(): CustomerUser[] {
         let customers: CustomerUser[] = [];
-        for (let i = 0; i < this.users.length; i++) {
-            const user = this.users[i];
+        this.users.forEach(user => {
             if (this.isCustomer(user)) {
-                customers.push(user)
+                customers.push(user);
             } else {
-                console.error("User ist kein Kunde!")
+                console.error("User ist kein Kunde!");
             }
-        }
-        return customers
+        });
+        return customers;
     }
 
     // Type Guards
