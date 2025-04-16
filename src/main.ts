@@ -38,3 +38,12 @@ userManager.addUser({
 
 // Alle User ausgeben
 userManager.listUsers()
+
+// Alle Admins ausgeben
+console.log(userManager.getAdmins())
+
+// Alle Kunden ausgeben
+console.log(userManager.getCustomers())
+
+// Daten in JSON Datei speichern
+userManager.saveFileAsJSON(userManager.returnAllUsers())

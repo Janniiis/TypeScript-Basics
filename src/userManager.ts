@@ -1,4 +1,5 @@
 import {v4 as uuidv4} from "uuid";
+import {writeFileSync} from "fs";
 
 // User Interface
 interface IUser {
@@ -8,11 +9,11 @@ interface IUser {
     role: 'admin' | 'customer';
 }
 
-type AdminUser = IUser& {
+type AdminUser = IUser & {
     permissions: string[];
 }
 
-type CustomerUser = IUser& {
+type CustomerUser = IUser & {
     purchaseHistory: string[]
 }
 
@@ -27,7 +28,11 @@ export class UserManager {
     // Methoden
     // User hinzufügen
     public addUser(user: IUser): void {
-        this.users.push(user);
+        if (this.isValidEmail(user.email) && this.isValidUser(user.name)){
+            this.users.push(user);
+        } else {
+            console.log("Invalider Username oder E-Mail Adresse!")
+        }
     }
 
     // Alle User ausgeben
@@ -36,14 +41,14 @@ export class UserManager {
     }
 
     // Alle Admins ausgeben
-    public getAdmins(): AdminUser[]{
+    public getAdmins(): AdminUser[] {
         let admins: AdminUser[] = [];
-        for (let i = 0; i < this.users.length; i++){
+        for (let i = 0; i < this.users.length; i++) {
             const user = this.users[i];
-            if (this.isAdmin(user)){
+            if (this.isAdmin(user)) {
                 admins.push(user)
             } else {
-                console.error("User ist kein Kunde!")
+                console.error("User ist kein Admin!")
             }
         }
         return admins
@@ -52,9 +57,9 @@ export class UserManager {
     // Alle Kunden ausgeben
     public getCustomers(): CustomerUser[] {
         let customers: CustomerUser[] = [];
-        for (let i = 0; i < this.users.length; i++){
+        for (let i = 0; i < this.users.length; i++) {
             const user = this.users[i];
-            if (this.isCustomer(user)){
+            if (this.isCustomer(user)) {
                 customers.push(user)
             } else {
                 console.error("User ist kein Kunde!")
@@ -69,16 +74,15 @@ export class UserManager {
         if (_User.role === 'admin') {
             return true;
         } else {
-            console.error("User ist kein Admin!");
             return false;
         }
     }
 
+    // Ist der User ein Kunde?
     public isCustomer(_User: IUser): _User is CustomerUser {
         if (_User.role === 'customer') {
             return true;
         } else {
-            console.error("User ist kein Kunde!");
             return false;
         }
     }
@@ -89,12 +93,27 @@ export class UserManager {
     }
 
     // Ist es eine Valide E-Mail Adresse?
-    public isValidEmail(user: IUser): boolean{
-        if ("@mail.de" in user){
-            return true;
-        } else {
-            console.error("Ungültige E-Mail Adresse!");
-            return false;
-        }
+    public isValidEmail(email: string): boolean {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
+
+    // Ist es ein Valider Username?
+    public isValidUser(name: string): boolean {
+        const userRegex = /^[a-zA-Z0-9._-]{3,15}$/
+        return userRegex.test(name);
+    }
+
+    // Daten in einer JSON Datei speichern
+    public saveFileAsJSON(users: IUser[]): void {
+        let JSONdata = JSON.stringify(users);
+        writeFileSync("file.json", JSONdata, {
+            flag: "w"
+        });
+    }
+
+    // Returned alle User
+    public returnAllUsers(): IUser[] {
+        return this.users;
     }
 }
